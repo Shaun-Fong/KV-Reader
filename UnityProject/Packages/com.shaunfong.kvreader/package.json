@@ -1,0 +1,10 @@
+{
+  "name": "com.shaunfong.kvreader",
+  "version": "1.0.0",
+  "displayName": "KV Reader",
+  "description": "Key-Value file reader.",
+  "unity": "2022.3",
+  "author": {
+    "name": "ShaunFong"
+  }
+}

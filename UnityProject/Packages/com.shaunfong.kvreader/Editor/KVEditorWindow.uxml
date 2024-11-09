@@ -1,0 +1,19 @@
+<engine:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:engine="UnityEngine.UIElements" xmlns:editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="True">
+    <Style src="project://database/Packages/com.shaunfong.kvreader/Editor/KVEditorWindow.uss?fileID=7433441132597879392&amp;guid=67207e1094dcbd340a9c4e7076a39267&amp;type=3#KVEditorWindow" />
+    <engine:VisualElement style="flex-grow: 1;">
+        <editor:Toolbar>
+            <editor:ToolbarButton text="New" name="btn_new" />
+            <editor:ToolbarButton text="Open" name="btn_open" />
+            <editor:ToolbarButton text="Save" name="btn_save" />
+            <engine:Button text="Button" enabled="true" picking-mode="Ignore" name="btn_path" style="background-color: rgba(188, 188, 188, 0); border-left-color: rgba(149, 149, 149, 0); border-right-color: rgba(149, 149, 149, 0); border-top-color: rgba(149, 149, 149, 0); border-bottom-color: rgba(149, 149, 149, 0);" />
+        </editor:Toolbar>
+        <engine:VisualElement style="flex-grow: 1;">
+            <engine:MultiColumnListView reorderable="true" show-border="false" virtualization-method="FixedHeight" show-alternating-row-backgrounds="None" horizontal-scrolling="false" show-foldout-header="false" show-add-remove-footer="true" allow-add="true" allow-remove="true" binding-source-selection-mode="Manual" selection-type="Single" reorder-mode="Animated" show-bound-collection-size="true" sorting-mode="None" name="listview">
+                <engine:Columns reorderable="true" primary-column-name="KEY">
+                    <engine:Column name="KEY" title="KEY" width="100px" sortable="false" stretchable="false" />
+                    <engine:Column visible="true" name="VALUE" width="121.18px" title="VALUE" optional="true" sortable="false" stretchable="true" />
+                </engine:Columns>
+            </engine:MultiColumnListView>
+        </engine:VisualElement>
+    </engine:VisualElement>
+</engine:UXML>
