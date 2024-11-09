@@ -1,5 +1,6 @@
 {
   "dependencies": {
+    "com.needle.upm-in-unitypackage": "https://github.com/needle-tools/hybrid-packages.git",
     "com.unity.collab-proxy": "2.5.2",
     "com.unity.feature.development": "1.0.2",
     "com.unity.inputsystem": "1.11.2",
