@@ -1,7 +1,6 @@
 using KVReader;
 using System;
 using System.IO;
-using Unity.Properties;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -39,38 +38,59 @@ public class KVEditorWindow : EditorWindow
         btn_path = instance.Q<Button>("btn_path");
         listview = instance.Q<MultiColumnListView>("listview");
 
-        listview.columns["KEY"].makeCell = () => new TextField();
-        listview.columns["VALUE"].makeCell = () => new TextField();
-        listview.columns["KEY"].bindCell = (VisualElement element, int index) =>
+        Func<VisualElement> KEY_MakeCell = () =>
         {
-            TextField textField = element as TextField;
+            var textField = new TextField();
+            textField.RegisterValueChangedCallback(evt =>
+            {
+                var i = (int)textField.userData;
+                m_Reader.Data[i].Key = evt.newValue;
+            });
+            return textField;
+        };
 
+        Action<VisualElement, int> KEY_BindCell = (VisualElement element, int index) =>
+        {
             if (m_Reader.Data[index] == null)
             {
                 m_Reader.Data[index] = new KVData("", "");
             }
+
+            TextField textField = element as TextField;
 
             textField.value = m_Reader.Data[index].Key;
-            textField.RegisterCallback((ChangeEvent<string> evt) =>
-            {
-                m_Reader.Data[index].Key = evt.newValue;
-            });
+            textField.userData = index;
         };
-        listview.columns["VALUE"].bindCell = (VisualElement element, int index) =>
-        {
-            TextField textField = element as TextField;
 
+        Func<VisualElement> VALUE_MakeCell = () =>
+        {
+            var textField = new TextField();
+            textField.RegisterValueChangedCallback(evt =>
+            {
+                var i = (int)textField.userData;
+                m_Reader.Data[i].Value = evt.newValue;
+            });
+            return textField;
+        };
+
+        Action<VisualElement, int> VALUE_BindCell = (VisualElement element, int index) =>
+        {
             if (m_Reader.Data[index] == null)
             {
                 m_Reader.Data[index] = new KVData("", "");
             }
 
+            TextField textField = element as TextField;
+
             textField.value = m_Reader.Data[index].Value;
-            textField.RegisterCallback((ChangeEvent<string> evt) =>
-            {
-                m_Reader.Data[index].Value = evt.newValue;
-            });
+            textField.userData = index;
         };
+
+        listview.columns["KEY"].makeCell = KEY_MakeCell;
+        listview.columns["KEY"].bindCell = KEY_BindCell;
+        listview.columns["VALUE"].makeCell = VALUE_MakeCell;
+        listview.columns["VALUE"].bindCell = VALUE_BindCell;
+
         listview.itemsSource = m_Reader.Data;
 
         btn_new.clicked += NewFile;
@@ -88,7 +108,7 @@ public class KVEditorWindow : EditorWindow
 
     private void RefreshPath()
     {
-        if(string.IsNullOrEmpty(m_SavePath))
+        if (string.IsNullOrEmpty(m_SavePath))
         {
             btn_path.text = "new file";
         }
