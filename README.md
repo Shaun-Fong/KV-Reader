@@ -14,9 +14,9 @@ This is a simple key-value structure file parser, which can be used for various 
 </p>
 
 # Install
-For Unity, download package from [here](https://github.com/Shaun-Fong/KV-Reader/releases/download/1.0.0/com.shaunfong.kvreader.unitypackage).
+For Unity, download package from [here](https://github.com/Shaun-Fong/KV-Reader/releases/latest/download/com.shaunfong.kvreader.unitypackage).
 
-For Dll, download from [here](https://github.com/Shaun-Fong/KV-Reader/releases/download/1.0.0/ShaunFong.KVReader.dll).
+For Dll, download from [here](https://github.com/Shaun-Fong/KV-Reader/releases/latest/download/ShaunFong.KVReader.dll).
 
 # K-V File
 
