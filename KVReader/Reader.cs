@@ -78,7 +78,7 @@ namespace KVReader
         }
 
         /// <summary>
-        /// Private method to parse the document from a string and extract comments
+        /// Parse the document from a string and extract comments
         /// </summary>
         /// <param name="documentContent">content</param>
         /// <param name="headerComments">comments</param>
@@ -127,7 +127,7 @@ namespace KVReader
         }
 
         /// <summary>
-        /// Private method to format the key-value pairs and comments back into a string
+        /// Format the key-value pairs and comments back into a string
         /// </summary>
         /// <param name="keyValuePairs">data</param>
         /// <param name="headerComments">comments</param>
