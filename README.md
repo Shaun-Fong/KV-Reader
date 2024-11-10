@@ -42,6 +42,11 @@ or... unity scene files!
 
 # Usage
 
+Open Unity `KV Reader` tool by click `Tools/KV Reader`
+
+![image](https://github.com/user-attachments/assets/11567ebe-f3f5-4e98-a90b-d5ef9d8b3c96)
+
+
 ``` C#
 // Reader Parse
 Reader reader = new Reader();
