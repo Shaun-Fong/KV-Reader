@@ -18,6 +18,21 @@ public class KVEditorWindow : EditorWindow
     private KVReader.Reader m_Reader;
     private string m_SavePath;
 
+    private bool m_LoadNewFile;
+    private bool m_IsDirty;
+    private bool IsDirty
+    {
+        get
+        {
+            return m_IsDirty;
+        }
+        set
+        {
+            m_IsDirty = value;
+            this.titleContent = new GUIContent("KV Reader" + (m_IsDirty ? " *" : ""));
+        }
+    }
+
     [MenuItem("Tools/KV Reader")]
     public static void ShowWindow()
     {
@@ -31,6 +46,8 @@ public class KVEditorWindow : EditorWindow
         VisualElement root = rootVisualElement;
         VisualElement instance = m_VisualTreeAsset.Instantiate();
         m_Reader = new KVReader.Reader();
+        IsDirty = false;
+        m_LoadNewFile = false;
 
         btn_new = instance.Q<Button>("btn_new");
         btn_open = instance.Q<Button>("btn_open");
@@ -43,9 +60,19 @@ public class KVEditorWindow : EditorWindow
             var textField = new TextField();
             textField.RegisterValueChangedCallback(evt =>
             {
+                if (textField.userData == null)
+                    return;
+
                 var i = (int)textField.userData;
+
+                if (m_Reader.Data[i].Value != evt.newValue && m_LoadNewFile == false)
+                {
+                    IsDirty = true;
+                }
+
                 m_Reader.Data[i].Key = evt.newValue;
             });
+            IsDirty = true;
             return textField;
         };
 
@@ -60,6 +87,7 @@ public class KVEditorWindow : EditorWindow
 
             textField.value = m_Reader.Data[index].Key;
             textField.userData = index;
+            IsDirty = true;
         };
 
         Func<VisualElement> VALUE_MakeCell = () =>
@@ -67,9 +95,19 @@ public class KVEditorWindow : EditorWindow
             var textField = new TextField();
             textField.RegisterValueChangedCallback(evt =>
             {
+                if (textField.userData == null)
+                    return;
+
                 var i = (int)textField.userData;
+
+                if (m_Reader.Data[i].Value != evt.newValue && m_LoadNewFile == false)
+                {
+                    IsDirty = true;
+                }
+
                 m_Reader.Data[i].Value = evt.newValue;
             });
+            IsDirty = true;
             return textField;
         };
 
@@ -84,6 +122,7 @@ public class KVEditorWindow : EditorWindow
 
             textField.value = m_Reader.Data[index].Value;
             textField.userData = index;
+            IsDirty = true;
         };
 
         listview.columns["KEY"].makeCell = KEY_MakeCell;
@@ -106,6 +145,26 @@ public class KVEditorWindow : EditorWindow
         root.Add(instance);
     }
 
+    private void OnDestroy()
+    {
+        if (IsDirty == true)
+        {
+            if (EditorUtility.DisplayDialog("Save file", "File is changed, do you want to save before quit?", "YES", "NO"))
+            {
+                IsDirty = false;
+                SaveFile();
+            }
+        }
+    }
+
+    private void OnGUI()
+    {
+        if (m_LoadNewFile == true)
+        {
+            m_LoadNewFile = false;
+        }
+    }
+
     private void RefreshPath()
     {
         if (string.IsNullOrEmpty(m_SavePath))
@@ -120,17 +179,50 @@ public class KVEditorWindow : EditorWindow
 
     private void NewFile()
     {
-        m_Reader.Data.Clear();
-        listview.RefreshItems();
+        void newFile()
+        {
+            m_Reader.Data.Clear();
+            listview.RefreshItems();
 
-        m_SavePath = "";
-        RefreshPath();
+            m_SavePath = "";
+            RefreshPath();
+        }
+
+        if (IsDirty)
+        {
+            if (EditorUtility.DisplayDialog("Create new file", "File will not be save, are you sure to create new file?", "YES", "NO"))
+            {
+                IsDirty = false;
+                newFile();
+            }
+        }
+        else
+        {
+            newFile();
+        }
     }
 
     private void OpenFile()
     {
-        string filePath = EditorUtility.OpenFilePanel("Open File", Application.dataPath, "");
-        LoadFile(filePath);
+        void open()
+        {
+            m_LoadNewFile = true;
+            string filePath = EditorUtility.OpenFilePanel("Open File", Application.dataPath, "");
+            LoadFile(filePath);
+            IsDirty = false;
+        }
+
+        if (IsDirty == true)
+        {
+            if (EditorUtility.DisplayDialog("Open file", "File is changed, are you sure to load a new file without save?", "YES", "NO"))
+            {
+                open();
+            }
+        }
+        else
+        {
+            open();
+        }
     }
 
     private void LoadFile(string filePath)
@@ -140,26 +232,45 @@ public class KVEditorWindow : EditorWindow
             return;
         }
 
+        Debug.Log($"Loaded at '{filePath}'.");
         m_Reader.ParseFromPath(filePath);
         listview.RefreshItems();
 
         m_SavePath = filePath;
         RefreshPath();
+        IsDirty = false;
     }
 
     private void SaveFile()
     {
-        while (string.IsNullOrEmpty(m_SavePath))
+        void save()
         {
-            m_SavePath = EditorUtility.SaveFilePanel("Save File", Application.dataPath, "new file", "txt");
+            while (string.IsNullOrEmpty(m_SavePath))
+            {
+                m_SavePath = EditorUtility.SaveFilePanel("Save File", Application.dataPath, "new file", "txt");
+            }
+
+            string content = m_Reader.ParseToString();
+
+            File.WriteAllText(m_SavePath, content);
+            Debug.Log($"Saved at '{m_SavePath}'.");
+
+            listview.RefreshItems();
+            RefreshPath();
+            AssetDatabase.Refresh();
+            IsDirty = false;
         }
 
-        string content = m_Reader.ParseToString();
-
-        File.WriteAllText(m_SavePath, content);
-
-        listview.RefreshItems();
-        RefreshPath();
-        AssetDatabase.Refresh();
+        if (IsDirty == true)
+        {
+            if (EditorUtility.DisplayDialog("Save file", "Are you sure to save?", "YES", "NO"))
+            {
+                save();
+            }
+        }
+        else
+        {
+            save();
+        }
     }
 }
