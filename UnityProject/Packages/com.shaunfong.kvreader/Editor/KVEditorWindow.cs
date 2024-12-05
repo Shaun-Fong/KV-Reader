@@ -33,6 +33,18 @@ public class KVEditorWindow : EditorWindow
         }
     }
 
+    public string LastSavePath
+    {
+        get
+        {
+            return EditorPrefs.GetString(Application.companyName + "_" + Application.productName + "_LastSavePath", "");
+        }
+        set
+        {
+            EditorPrefs.SetString(Application.companyName + "_" + Application.productName + "_LastSavePath", value);
+        }
+    }
+
     [MenuItem("Tools/KV Reader")]
     public static void ShowWindow()
     {
@@ -207,7 +219,7 @@ public class KVEditorWindow : EditorWindow
         void open()
         {
             m_LoadNewFile = true;
-            string filePath = EditorUtility.OpenFilePanel("Open File", Application.dataPath, "");
+            string filePath = EditorUtility.OpenFilePanel("Open File", LastSavePath, "");
             LoadFile(filePath);
             IsDirty = false;
         }
@@ -232,6 +244,8 @@ public class KVEditorWindow : EditorWindow
             return;
         }
 
+        LastSavePath = Path.GetDirectoryName(filePath);
+
         Debug.Log($"Loaded at '{filePath}'.");
         m_Reader.ParseFromPath(filePath);
         listview.RefreshItems();
@@ -247,7 +261,8 @@ public class KVEditorWindow : EditorWindow
         {
             while (string.IsNullOrEmpty(m_SavePath))
             {
-                m_SavePath = EditorUtility.SaveFilePanel("Save File", Application.dataPath, "new file", "txt");
+                m_SavePath = EditorUtility.SaveFilePanel("Save File", LastSavePath, "new file", "txt");
+                LastSavePath = Path.GetDirectoryName(m_SavePath);
             }
 
             string content = m_Reader.ParseToString();
