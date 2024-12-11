@@ -31,18 +31,16 @@ KEY          VALUE1
 KEY1         VALUE2
 ```
 
-This tiny library can parse almost any file (though the format may not always be correct XD), even .meta files:
+This tiny library can parse almost any file :
 
 ![image](https://github.com/user-attachments/assets/e21f8b58-6624-4b88-9f17-2cfd9183a4ef)
-
-or... unity scene files!
 
 ![image](https://github.com/user-attachments/assets/0c24fe55-6bb6-4418-a07e-0f1f55d6c07d)
 
 
 # Usage
 
-Open Unity `KV Reader` tool by click `Tools/KV Reader`
+Open `KV Reader` Tool by clicking `Tools/KV Reader`
 
 ![image](https://github.com/user-attachments/assets/11567ebe-f3f5-4e98-a90b-d5ef9d8b3c96)
 
