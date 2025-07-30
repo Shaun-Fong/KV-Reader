@@ -30,12 +30,22 @@ namespace KVReader
         {
             get
             {
-                if (_KeyValueIndex.ContainsKey(key))
+                if (HasKey(key))
                 {
                     return _KeyValueIndex[key].ToArray();
                 }
                 return new string[0];  // Return an empty array if the key is not found
             }
+        }
+
+        /// <summary>
+        /// Has the specified key in the data
+        /// </summary>
+        /// <param name="key">key</param>
+        /// <returns>result</returns>
+        public bool HasKey(string key)
+        {
+            return _KeyValueIndex.ContainsKey(key);
         }
 
         /// <summary>
